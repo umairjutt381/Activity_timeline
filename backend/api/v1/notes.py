@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-from backend.api.activity.schema.schemas import Note
-from backend.service.manual_notes import add_manual_notes, delete_manual_notes, update_manual_notes
+
+from backend.models.manual_activity import Note
+from backend.service.notes import add_manual_notes, delete_manual_notes, update_manual_notes
 
 
 router = APIRouter(prefix="/notes", tags=["notes"])

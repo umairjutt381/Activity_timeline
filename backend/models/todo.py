@@ -1,7 +1,8 @@
 
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from backend.api.activity.schema.schemas import User
+
+from backend.models.manual_activity import User
 
 class TodoTask(BaseModel):
     id: Optional[str] = Field(None, alias="_id")

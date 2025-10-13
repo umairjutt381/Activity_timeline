@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-from backend.api.todo.schema.schemas import TodoAccount
-from backend.service.manual_todo import get_manual_todo, status_mark_as_done
+
+from backend.models.todo import TodoAccount
+from backend.service.todo import get_manual_todo, status_mark_as_done
 
 router = APIRouter(prefix="/todo",tags=["todo"])
 
