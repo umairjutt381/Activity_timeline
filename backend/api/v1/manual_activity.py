@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from backend.api.activity.schema.schemas import Activity, Note
+
+from backend.models.manual_activity import Activity
 from backend.service.manual_activity import create_manual_activity, get_manual_activity, get_activity_by_activity_id, \
     update_manual_activity, delete_manual_activity
 

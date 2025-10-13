@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from backend.api.todo.schema.schemas import TodoAccount
+from backend.models.todo import TodoAccount
 from backend.utils.db_connection import activity_collection
 
 

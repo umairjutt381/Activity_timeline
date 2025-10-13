@@ -1,7 +1,8 @@
 
 from fastapi import APIRouter
-from backend.api.activity.schema.schemas import Activity, Task, Note, Opportunity
-from backend.service.manual_task import add_manual_task, delete_manual_task, update_manual_task, add_manual_opportunity
+
+from backend.models.manual_activity import Task,Opportunity
+from backend.service.task import add_manual_task, delete_manual_task, update_manual_task, add_manual_opportunity
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
