@@ -1,6 +1,6 @@
 from bson import ObjectId
 from fastapi import APIRouter
-from backend.api.activity.schema.schemas import Activity, Task, Note, Opportunity
+from backend.api.activity.schema.schemas import Activity, Note
 from backend.utils.db_connection import activity_collection
 from datetime import datetime
 from fastapi import HTTPException
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/activity", tags=["activity"])
 
 @router.post("/create_activity/{accountId}")
 def create_activity(activity: Activity,accountId: str):
-    activity_dict = activity.dict(by_alias=True)
+    activity_dict = activity.model_dump()
     activity_dict["accountId"] = accountId
     result = activity_collection.insert_one(activity_dict)
     if result.inserted_id:
@@ -42,12 +42,10 @@ def update_activity(activity_id: str, update_data: Activity):
     if not existing_activity:
         raise HTTPException(status_code=404, detail="Activity not found")
 
-    data_to_update = update_data.dict(exclude_unset=True, by_alias=True)
+    data_to_update = update_data.model_dump()
     if not data_to_update:
         raise HTTPException(status_code=400, detail="No fields provided for update")
-
     data_to_update["updatedAt"] = datetime.utcnow()
-
     result = activity_collection.update_one(
         {"_id": obj_id},
         {"$set": data_to_update}
@@ -75,36 +73,5 @@ def delete_activity(activity_id: str):
     else:
         raise HTTPException(status_code=404, detail="Activity already not found")
 
-
-@router.post("/add notes/{activity_id}")
-def add_note(note: Note,activity_id: str):
-    obj_id = ObjectId(activity_id)
-    activity = activity_collection.find_one({"_id": obj_id})
-    if not activity:
-        raise HTTPException(status_code=404, detail="Activity not found")
-    note_dict = note.model_dump()
-    result = activity_collection.update_one(
-        {"_id": obj_id},
-        {"$push": {"notes": note_dict}}
-    )
-    if result.modified_count == 1:
-        return JSONResponse(status_code=201, content={"message": "note added"})
-    raise HTTPException(status_code=500, detail="failed to add task")
-
-@router.delete("/delete note/{note_id}")
-def delete_notes( note_id: str):
-    result = activity_collection.update_one(
-        {"notes._id": note_id},
-        {"$set": {"notes.$.isDeleted": True}}
-    )
-    if result.modified_count == 1:
-        return JSONResponse(
-            status_code=200,
-            content={
-                "message": "Task deleted successfully",
-                "note_id": note_id
-            }
-        )
-    raise HTTPException(status_code=500, detail="Failed to delete task or task not found")
 
 

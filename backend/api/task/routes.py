@@ -42,7 +42,7 @@ def delete_task( task_id: str):
 
 @router.patch("/update_task/{task_id}")
 def update_task(task_id: str, task: Task):
-    update_data = task.dict(exclude_unset=True, by_alias=True)
+    update_data = task.model_dump()
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields provided to update")
     updated_fields = {f"tasks.$.{k}": v for k, v in update_data.items()}
