@@ -1,9 +1,11 @@
+import uuid
+
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List, Literal, Union
 
 class Note(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     text: Optional[str] = None
     createdBy: Optional[str] = None
     createdAt: Optional[datetime] = None
@@ -19,7 +21,7 @@ class User(BaseModel):
     name: str
 
 class Task(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     taskName: Optional[str] = None
     description: Optional[str] = None
     assignedTo: Optional[User] = None
@@ -33,7 +35,6 @@ class Task(BaseModel):
     isDeleted: Optional[bool] = False
 
 class ActivityBase(BaseModel):
-    accountId: Optional[str] = None
     title: Optional[str] = None
     activityDate: Optional[datetime] = None
     loggedBy: Optional[str] = None
@@ -41,20 +42,20 @@ class ActivityBase(BaseModel):
 
 class Meeting(ActivityBase):
     activityType: Optional[Literal["meeting"]] = None
-    internalAttendees: Optional[List[str]] = None
-    externalAttendees: Optional[List[str]] = None
-    notes: Optional[List[Note]] = None
-    tasks: Optional[List[Task]] = None
+    internalAttendees: Optional[List[str]] = []
+    externalAttendees: Optional[List[str]] = []
+    notes: Optional[List[Note]] = []
+    tasks: Optional[List[Task]] = []
 
 class Notes(ActivityBase):
     activityType: Optional[Literal["notes"]] = None
-    notes: Optional[List[Note]] = None
-    tasks: Optional[List[Task]] = None
+    notes: Optional[List[Note]] = []
+    tasks: Optional[List[Task]] = []
 
 class Milestone(ActivityBase):
     activityType: Optional[Literal["milestone"]] = None
     milestoneType: Optional[str] = None
-    notes: Optional[List[Note]] = None
-    tasks: Optional[List[Task]] = None
+    notes: Optional[List[Note]] = []
+    tasks: Optional[List[Task]] = []
 
 Activity = Union[Meeting, Notes, Milestone]
