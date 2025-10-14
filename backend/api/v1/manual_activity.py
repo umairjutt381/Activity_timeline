@@ -7,12 +7,12 @@ from backend.service.manual_activity import create_manual_activity, get_manual_a
 router = APIRouter(prefix="/activity", tags=["activity"])
 
 @router.post("/create_activity/{accountId}")
-def create_activity(activity: Activity,accountId: str):
+def create_activity(activity: Activity,accountId:str):
     return create_manual_activity(activity,accountId)
 
 
 @router.get("/activities/{accountId}")
-def get_activities(accountId: str):
+def get_activities(accountId:str):
     return get_manual_activity(accountId)
 @router.get("/activity/{activity_id}")
 def get_activity(activity_id: str):

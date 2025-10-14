@@ -38,7 +38,6 @@ def update_manual_activity(activity_id,update_data):
     data_to_update = update_data.model_dump()
     if not data_to_update:
         raise HTTPException(status_code=400, detail="No fields provided for update")
-    data_to_update["updatedAt"] = datetime.utcnow()
     result = activity_collection.update_one(
         {"_id": obj_id},
         {"$set": data_to_update}

@@ -1,3 +1,4 @@
+import uuid
 
 from pydantic import BaseModel, Field
 from typing import Optional, List
@@ -5,7 +6,7 @@ from typing import Optional, List
 from backend.models.manual_activity import User
 
 class TodoTask(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
+    id: Optional[str] = None
     assignedTo: Optional[User] = None
     status: Optional[str] = None
     startDate: Optional[str] = None
