@@ -18,7 +18,7 @@ def get_activities(accountId:str):
 def get_activity(activity_id: str):
     return get_activity_by_activity_id(activity_id)
 
-@router.put("/activity/{activity_id}")
+@router.patch("/activity/{activity_id}")
 def update_activity(activity_id: str, update_data: Activity):
     return update_manual_activity(activity_id,update_data)
 
