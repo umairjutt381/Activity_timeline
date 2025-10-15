@@ -35,7 +35,7 @@ def update_manual_activity(activity_id,update_data):
     if not existing_activity:
         raise HTTPException(status_code=404, detail="Activity not found")
 
-    data_to_update = update_data.model_dump()
+    data_to_update = update_data.model_dump(exclude_unset=True)
     if not data_to_update:
         raise HTTPException(status_code=400, detail="No fields provided for update")
     result = activity_collection.update_one(

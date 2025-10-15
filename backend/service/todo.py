@@ -6,22 +6,18 @@ from backend.utils.db_connection import activity_collection
 
 def get_manual_todo(account_id):
     pipeline = [
-        {
-            "$match": {"accountId": account_id}
-        },
-        {
-            "$project": {
-                "_id": 0,
-                "accountId": 1,
-                "tasks": {
-                    "$filter": {
-                        "input": "$tasks",
-                        "as": "task",
-                        "cond": {"$eq": ["$$task.isDeleted", False]}
-                    }
-                }
-            }
-        }
+        {"$match": {"accountId": account_id}},
+        {"$unwind": "$tasks"},
+        {"$match": {"tasks.isDeleted": False}},
+        {"$group": {
+            "_id": "$accountId",
+            "tasks": {"$push": "$tasks"}
+        }},
+        {"$project": {
+            "_id": 0,
+            "accountId": "$_id",
+            "tasks": 1
+        }}
     ]
     account = list(activity_collection.aggregate(pipeline))
     if not account:
