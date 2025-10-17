@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from backend.utils.db_connection import activity_collection
 
 
-def add_manual_task(task,activity_id):
+def add_manual_task(activity_id:str,task):
     obj_id = ObjectId(activity_id)
     activity = activity_collection.find_one({"_id": obj_id})
     if not activity:
@@ -19,11 +19,12 @@ def add_manual_task(task,activity_id):
         return JSONResponse(status_code=201, content={"message": "task added"})
     raise HTTPException(status_code=500, detail="failed to add task")
 
-def delete_manual_task(task_id):
+def delete_manual_task(task_id:str):
     result = activity_collection.update_one(
-        {"tasks._id": task_id},
+        {"tasks.id": task_id},
         {"$set": {"tasks.$.isDeleted": True}}
     )
+
     if result.modified_count == 1:
         return JSONResponse(
             status_code=200,
@@ -32,15 +33,15 @@ def delete_manual_task(task_id):
                 "task_id": task_id
             }
         )
-    raise HTTPException(status_code=500, detail="Failed to delete task or task not found")
+    raise HTTPException(status_code=404, detail="Task not found")
 
 def update_manual_task(task_id,task):
-    update_data = task.model_dump()
+    update_data = task.model_dump(exclude_unset=True)
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields provided to update")
     updated_fields = {f"tasks.$.{k}": v for k, v in update_data.items()}
     result = activity_collection.update_one(
-        {"tasks._id": task_id},
+        {"tasks.id": task_id},
         {"$set": updated_fields}
     )
     if result.matched_count == 0:

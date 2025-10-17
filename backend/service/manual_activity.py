@@ -1,8 +1,9 @@
+from typing import Optional, List
 from bson import ObjectId
-from fastapi import HTTPException
+from fastapi import HTTPException,Query
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from backend.utils.db_connection import activity_collection
 
 
@@ -14,11 +15,43 @@ def create_manual_activity(activity,accountId):
         return JSONResponse(status_code=201, content={"message": "Activity created", "id": str(result.inserted_id)})
     raise HTTPException(status_code=500, detail="Failed to create activity due to some error")
 
-def get_manual_activity(accountId):
-    activities = []
-    for activity in activity_collection.find({"accountId":accountId}):
+def get_manual_activity(
+        accountId:str,
+        activityType: Optional[str] = None,
+        loggedBy : Optional[str] = None,
+        opportunityId: Optional[int] = None,
+        opportunityName: Optional[str] = None,
+        days: Optional[int] = None
+):
+    matched_filter = {}
+    if accountId:
+        matched_filter["accountId"] = accountId
+    if activityType:
+        activity_type_list = activityType.split(",")
+        # activity_type_list = [x.strip() for x in activity_type if x and  x.split(",")]
+
+        matched_filter["activityType"] = {"$in": activity_type_list}
+    if loggedBy:
+        matched_filter["loggedBy"] = loggedBy
+    if opportunityId:
+        matched_filter["tasks.linkedOpportunity.id"] = opportunityId
+
+    if opportunityName:
+        matched_filter["tasks.linkedOpportunity.name"] = opportunityName
+
+    if days:
+        previous_day = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat() +"Z"
+        matched_filter["activityDate"] = {
+            "$gt": previous_day
+        }
+    pipeline = [
+        {
+            "$match": matched_filter
+        }
+    ]
+    activities = list(activity_collection.aggregate(pipeline))
+    for activity in activities:
         activity["_id"] = str(activity["_id"])
-        activities.append(activity)
     return {"activities": activities}
 
 def get_activity_by_activity_id(activity_id):

@@ -6,12 +6,12 @@ from backend.service.task import add_manual_task, delete_manual_task, update_man
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
-@router.post("/add task/{activity_id}")
-def add_task(task: Task,activity_id: str):
+@router.post("/add-task/{activity_id}")
+def add_task(activity_id : str ,task: Task):
     return add_manual_task(task,activity_id)
 
-@router.delete("/delete task/{task_id}")
-def delete_task( task_id: str):
+@router.delete("/delete-task/{task_id}")
+def delete_task(task_id: str):
     return delete_manual_task(task_id)
 
 @router.patch("/update_task/{task_id}")

@@ -29,11 +29,11 @@ def delete_manual_notes(note_id):
         return JSONResponse(
             status_code=200,
             content={
-                "message": "Task deleted successfully",
+                "message": "Notes deleted successfully",
                 "note_id": note_id
             }
         )
-    raise HTTPException(status_code=500, detail="Failed to delete task or task not found")
+    raise HTTPException(status_code=500, detail="Failed to delete note or note not found")
 
 
 def update_manual_notes(note_id, note):
