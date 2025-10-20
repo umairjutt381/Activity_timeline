@@ -28,17 +28,13 @@ def get_manual_activity(
         matched_filter["accountId"] = accountId
     if activityType:
         activity_type_list = activityType.split(",")
-        # activity_type_list = [x.strip() for x in activity_type if x and  x.split(",")]
-
         matched_filter["activityType"] = {"$in": activity_type_list}
     if loggedBy:
         matched_filter["loggedBy"] = loggedBy
     if opportunityId:
         matched_filter["tasks.linkedOpportunity.id"] = opportunityId
-
     if opportunityName:
         matched_filter["tasks.linkedOpportunity.name"] = opportunityName
-
     if days:
         previous_day = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat() +"Z"
         matched_filter["activityDate"] = {
@@ -47,9 +43,18 @@ def get_manual_activity(
     pipeline = [
         {
             "$match": matched_filter
+        },
+        {
+            "$sort": {"activityDate": 1}
+        },
+        {
+            "$addFields": {
+                "timestamp": {"$toLong": {"$toDate": "$activityDate"}}
+            }
         }
     ]
-    activities = list(activity_collection.aggregate(pipeline))
+    activities = list(activity_collection.aggregate(pipeline).to_list(1000)
+        )
     for activity in activities:
         activity["_id"] = str(activity["_id"])
     return {"activities": activities}

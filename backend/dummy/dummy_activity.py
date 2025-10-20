@@ -22,25 +22,28 @@ def generate_activity_fake_data(number_of_activities: int,account_id:str):
             "activityType": random.choice(ACTIVITY_TYPES),
             "loggedBy": fake.word(),
             "status": random.choice(STATUSES),
+            "mention":[{"id": str(random.randint(1, 100)), "name": fake.word()}],
             "tasks":[{
                 "id": fake.uuid4(),
                 "taskName": fake.word(),
                 "description": fake.sentence(),
-                "assignedTo": fake.word(),
+                "assignedTo": [{"id": str(random.randint(1, 100)), "name": fake.word()}],
                 "category": fake.word(),
                 "status": fake.word(),
                 "startDate": fake.date_time_this_year(tzinfo=datetime.timezone.utc).isoformat()+"Z",
                 "dueDate": fake.date_time_this_year(tzinfo=datetime.timezone.utc).isoformat()+"Z",
-                "createdBy":[{"id": random.randint(1, 100), "name": fake.word()}],
+                "createdBy":[{"id": str(random.randint(1, 100)), "name": fake.word()}],
                 "priority": random.choice(PRIORITIES),
-                "linkedOpportunity":[{"id": random.randint(1, 100), "name": fake.word()}],
+                "linkedOpportunity":[{"id": str(random.randint(1, 100)), "name": fake.word()}],
+                "mention": [{"id": str(random.randint(1, 100)), "name": fake.word()}],
                 "isDeleted": False
                  }],
             "notes":[{
                 "id": fake.uuid4(),
                 "text": fake.sentence(),
-                "createdBy":[{"id": random.randint(1, 100), "name": fake.word()}],
+                "createdBy":[{"id": str(random.randint(1, 100)), "name": fake.word()}],
                 "createdAt": fake.date_time_this_year(tzinfo=datetime.timezone.utc).isoformat()+"Z",
+                "mention": [{"id": str(random.randint(1, 100)), "name": fake.word()}],
                 "isDeleted": False
             }]
         }

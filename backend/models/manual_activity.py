@@ -3,11 +3,17 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List, Literal, Union
 
+
+class User(BaseModel):
+    id: str
+    name: str
+
 class Note(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     text: Optional[str] = None
     createdBy: Optional[str] = None
     createdAt: Optional[datetime] = None
+    mention: Optional[List[User]] = []
     isDeleted: Optional[bool] = False
 
 
@@ -15,15 +21,11 @@ class Opportunity(BaseModel):
     opportunityId: str
     as_of_opportunity : str
 
-class User(BaseModel):
-    id: str
-    name: str
-
 class Task(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     taskName: Optional[str] = None
     description: Optional[str] = None
-    assignedTo: Optional[User] = None
+    assignedTo: Optional[User] = []
     category: Optional[str] = None
     status: Optional[str] = None
     startDate: Optional[str] = None
@@ -31,6 +33,7 @@ class Task(BaseModel):
     createdBy: Optional[User] = None
     priority: Optional[str] = None
     linkedOpportunity: Optional[Opportunity] = None
+    mention: Optional[List[User]] = []
     isDeleted: Optional[bool] = False
 
 class ActivityBase(BaseModel):
@@ -38,6 +41,7 @@ class ActivityBase(BaseModel):
     activityDate: Optional[datetime] = None
     loggedBy: Optional[str] = None
     status: Optional[str] = None
+    mention: Optional[List[User]] = []
 
 class Meeting(ActivityBase):
     activityType: Optional[Literal["meeting"]] = None
